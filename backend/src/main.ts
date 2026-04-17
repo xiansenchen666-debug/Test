@@ -5,6 +5,7 @@ import rateLimit from 'express-rate-limit';
 import dotenv from 'dotenv';
 import swaggerUi from 'swagger-ui-express';
 import path from 'path';
+import { fileURLToPath } from 'url';
 import { AuthController } from './controllers/auth.controller.js';
 
 dotenv.config();
@@ -64,8 +65,7 @@ app.use((err: any, req: Request, res: Response, next: NextFunction) => {
   });
 });
 
-// Serve Frontend Static Files
-import { fileURLToPath } from 'url';
+// Serve frontend static files
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const frontendPath = path.join(__dirname, '../../frontend');
