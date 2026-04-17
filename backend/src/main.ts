@@ -5,7 +5,7 @@ import rateLimit from 'express-rate-limit';
 import dotenv from 'dotenv';
 import swaggerUi from 'swagger-ui-express';
 import path from 'path';
-import { AuthController } from './controllers/auth.controller';
+import { AuthController } from './controllers/auth.controller.js';
 
 dotenv.config();
 
@@ -65,16 +65,22 @@ app.use((err: any, req: Request, res: Response, next: NextFunction) => {
 });
 
 // Serve Frontend Static Files
-const frontendPath = path.join(process.cwd(), 'frontend');
+import { fileURLToPath } from 'url';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const frontendPath = path.join(__dirname, '../../frontend');
 app.use(express.static(frontendPath));
 
-app.get('*', (req: Request, res: Response) => {
-  if (!req.path.startsWith('/api')) {
+app.use((req: Request, res: Response, next: NextFunction) => {
+  if (req.method === 'GET' && !req.path.startsWith('/api')) {
     res.sendFile(path.join(frontendPath, 'index.html'));
+  } else {
+    next();
   }
 });
 
-if (import.meta.main || require.main === module) {
+const isMainModule = import.meta.main || process.argv[1] === fileURLToPath(import.meta.url);
+if (isMainModule) {
   app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
   });
